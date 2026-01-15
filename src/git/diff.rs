@@ -1,8 +1,8 @@
 use std::process::Command;
 
-pub fn get_diff(file_path: &str) -> Vec<u8> {
+pub fn get_diff(file_path: &str, width: u16) -> Vec<u8> {
     // Try delta first
-    if let Ok(output) = try_delta(file_path) {
+    if let Ok(output) = try_delta(file_path, width) {
         return output;
     }
 
@@ -10,7 +10,7 @@ pub fn get_diff(file_path: &str) -> Vec<u8> {
     try_git_diff(file_path).unwrap_or_else(|_| b"Failed to get diff".to_vec())
 }
 
-fn try_delta(file_path: &str) -> Result<Vec<u8>, ()> {
+fn try_delta(file_path: &str, width: u16) -> Result<Vec<u8>, ()> {
     // Check if delta is available
     if which::which("delta").is_err() {
         return Err(());
@@ -37,8 +37,9 @@ fn try_delta(file_path: &str) -> Result<Vec<u8>, ()> {
         return Err(());
     }
 
-    // Pipe through delta
+    // Pipe through delta with terminal width
     let mut delta_process = Command::new("delta")
+        .args(["--width", &width.to_string()])
         .stdin(std::process::Stdio::piped())
         .stdout(std::process::Stdio::piped())
         .spawn()

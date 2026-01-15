@@ -1,6 +1,7 @@
 use ansi_to_tui::IntoText as _;
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
+use crossterm::terminal;
 use ratatui::{
     layout::{Constraint, Layout, Position},
     style::{Color, Modifier, Style},
@@ -315,7 +316,9 @@ impl App {
             if let Some(&file_idx) = self.filtered_indices.get(list_idx) {
                 if let Some(file) = self.files.get(file_idx) {
                     self.selected_file = Some(file.path.clone());
-                    self.diff_content = crate::git::get_diff(&file.path);
+                    // Get terminal width (subtract 2 for border)
+                    let width = terminal::size().map(|(w, _)| w.saturating_sub(2)).unwrap_or(80);
+                    self.diff_content = crate::git::get_diff(&file.path, width);
 
                     // Parse ANSI escape sequences into styled lines
                     self.diff_lines = match self.diff_content.as_slice().into_text() {
