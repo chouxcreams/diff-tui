@@ -44,6 +44,13 @@ tool = "delta"
 
 # Additional arguments to pass to the diff tool (optional)
 args = ["--side-by-side"]
+
+[editor]
+# Editor command (default: $EDITOR environment variable, then "vi")
+command = "nvim"
+
+# Additional arguments to pass to the editor (optional)
+args = []
 ```
 
 ### Diff Tool Behavior
@@ -95,6 +102,7 @@ diff-tui
 | `u` / `PageUp` | Scroll up 20 lines |
 | `g` / `Home` | Go to top |
 | `G` / `End` | Go to bottom |
+| `e` | Open file in editor |
 | `q` / `Esc` | Return to file selection |
 
 ## Tech Stack

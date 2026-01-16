@@ -1,5 +1,5 @@
-mod repository;
 mod diff;
+mod repository;
 
-pub use repository::{ChangedFile, FileStatus, Repository};
 pub use diff::get_diff;
+pub use repository::{ChangedFile, FileStatus, Repository};

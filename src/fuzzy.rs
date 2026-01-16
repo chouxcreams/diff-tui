@@ -1,6 +1,6 @@
 use nucleo::{
     pattern::{CaseMatching, Normalization, Pattern},
-    Matcher, Config,
+    Config, Matcher,
 };
 
 pub struct FuzzyMatcher {

@@ -169,10 +169,7 @@ impl App {
 
         let chunks = Layout::vertical([Constraint::Min(1), Constraint::Length(1)]).split(area);
 
-        let title = format!(
-            " {} ",
-            self.selected_file.as_deref().unwrap_or("Diff")
-        );
+        let title = format!(" {} ", self.selected_file.as_deref().unwrap_or("Diff"));
 
         let visible_height = chunks[0].height.saturating_sub(2) as usize;
         let visible_lines: Vec<Line> = self
@@ -191,7 +188,7 @@ impl App {
         let total_lines = self.diff_lines.len();
         let current_line = self.diff_scroll as usize + 1;
         let help = Paragraph::new(format!(
-            " j/k: scroll | q: back | Line {}/{} ",
+            " j/k: scroll | e: edit | q: back | Line {}/{} ",
             current_line.min(total_lines),
             total_lines
         ))
@@ -279,6 +276,9 @@ impl App {
             KeyCode::Char('G') | KeyCode::End => {
                 self.diff_scroll = self.diff_lines.len().saturating_sub(1) as u16;
             }
+            KeyCode::Char('e') => {
+                self.open_in_editor();
+            }
             _ => {}
         }
     }
@@ -306,7 +306,9 @@ impl App {
     }
 
     fn update_filter(&mut self) {
-        self.filtered_indices = self.fuzzy_matcher.filter(&self.file_paths, &self.search_query);
+        self.filtered_indices = self
+            .fuzzy_matcher
+            .filter(&self.file_paths, &self.search_query);
         // Reset selection to first item if there are results
         if !self.filtered_indices.is_empty() {
             self.list_state.select(Some(0));
@@ -321,7 +323,9 @@ impl App {
                 if let Some(file) = self.files.get(file_idx) {
                     self.selected_file = Some(file.path.clone());
                     // Get terminal width (subtract 2 for border)
-                    let width = terminal::size().map(|(w, _)| w.saturating_sub(2)).unwrap_or(80);
+                    let width = terminal::size()
+                        .map(|(w, _)| w.saturating_sub(2))
+                        .unwrap_or(80);
                     self.diff_content = crate::git::get_diff(&file.path, width, &self.config.diff);
 
                     // Parse ANSI escape sequences into styled lines
@@ -353,6 +357,31 @@ impl App {
                     self.screen = Screen::DiffView;
                 }
             }
+        }
+    }
+
+    fn open_in_editor(&mut self) {
+        if let Some(ref file_path) = self.selected_file {
+            let editor_config = &self.config.editor;
+            let command = editor_config.get_command();
+
+            // Temporarily exit TUI mode
+            let _ = terminal::disable_raw_mode();
+            let _ = crossterm::execute!(std::io::stdout(), terminal::LeaveAlternateScreen);
+
+            // Build and run the editor command
+            let mut cmd = std::process::Command::new(&command);
+            cmd.args(&editor_config.args);
+            cmd.arg(file_path);
+            let _ = cmd.status();
+
+            // Restore TUI mode
+            let _ = terminal::enable_raw_mode();
+            let _ = crossterm::execute!(
+                std::io::stdout(),
+                terminal::EnterAlternateScreen,
+                terminal::Clear(terminal::ClearType::All)
+            );
         }
     }
 }

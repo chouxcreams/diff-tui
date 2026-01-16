@@ -22,8 +22,9 @@ pub struct Repository {
 
 impl Repository {
     pub fn open_current_dir() -> Result<Self> {
-        let repo = Git2Repository::discover(".")
-            .context("Failed to find git repository. Please run this command inside a git repository.")?;
+        let repo = Git2Repository::discover(".").context(
+            "Failed to find git repository. Please run this command inside a git repository.",
+        )?;
         Ok(Self { inner: repo })
     }
 

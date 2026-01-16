@@ -7,6 +7,7 @@ use std::path::PathBuf;
 #[serde(default)]
 pub struct Config {
     pub diff: DiffConfig,
+    pub editor: EditorConfig,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -25,6 +26,25 @@ impl Default for DiffConfig {
             tool: "auto".to_string(),
             args: Vec::new(),
         }
+    }
+}
+
+#[derive(Debug, Deserialize, Clone, Default)]
+#[serde(default)]
+pub struct EditorConfig {
+    /// Editor command to use (defaults to $EDITOR environment variable, then "vi")
+    pub command: Option<String>,
+    /// Additional arguments to pass to the editor
+    pub args: Vec<String>,
+}
+
+impl EditorConfig {
+    /// Get the editor command, falling back to $EDITOR then "vi"
+    pub fn get_command(&self) -> String {
+        self.command
+            .clone()
+            .or_else(|| std::env::var("EDITOR").ok())
+            .unwrap_or_else(|| "vi".to_string())
     }
 }
 

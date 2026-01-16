@@ -24,7 +24,12 @@ pub fn get_diff(file_path: &str, width: u16, config: &DiffConfig) -> Vec<u8> {
     }
 }
 
-fn try_tool(tool_name: &str, file_path: &str, width: u16, extra_args: &[impl AsRef<str>]) -> Result<Vec<u8>, ()> {
+fn try_tool(
+    tool_name: &str,
+    file_path: &str,
+    width: u16,
+    extra_args: &[impl AsRef<str>],
+) -> Result<Vec<u8>, ()> {
     // Check if the tool is available
     if which::which(tool_name).is_err() {
         return Err(());
@@ -102,7 +107,13 @@ fn try_git_diff(file_path: &str) -> Result<Vec<u8>, ()> {
 
     // Try for untracked/new files
     let output = Command::new("git")
-        .args(["diff", "--color=always", "--no-index", "/dev/null", file_path])
+        .args([
+            "diff",
+            "--color=always",
+            "--no-index",
+            "/dev/null",
+            file_path,
+        ])
         .output()
         .map_err(|_| ())?;
 
