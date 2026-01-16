@@ -31,6 +31,30 @@ cargo build --release
 ./target/release/diff-tui
 ```
 
+## 設定
+
+`~/.config/diff-tui/config.toml` を作成して設定をカスタマイズできます:
+
+```toml
+[diff]
+# 使用するdiffツール（デフォルト: "auto"）
+# 選択肢: "auto", "delta", "diff-so-fancy", "difftastic", "colordiff", "git"
+# または任意のコマンド名を指定可能
+tool = "delta"
+
+# diffツールに渡す追加引数（オプション）
+args = ["--side-by-side"]
+```
+
+### Diffツールの動作
+
+| 値 | 動作 |
+|----|------|
+| `"auto"` | deltaを試し、なければgit diffにフォールバック（デフォルト） |
+| `"delta"` | deltaを使用（未インストールの場合はgit diffにフォールバック） |
+| `"git"` | git diffを直接使用 |
+| その他 | 指定したコマンドを使用（見つからない場合はgit diffにフォールバック） |
+
 ## 使い方
 
 Gitリポジトリ内で実行:

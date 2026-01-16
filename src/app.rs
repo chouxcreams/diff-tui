@@ -10,6 +10,7 @@ use ratatui::{
     DefaultTerminal, Frame,
 };
 
+use crate::config::Config;
 use crate::fuzzy::FuzzyMatcher;
 use crate::git::{ChangedFile, FileStatus, Repository};
 
@@ -33,10 +34,12 @@ pub struct App {
     pub diff_lines: Vec<Line<'static>>,
     pub diff_scroll: u16,
     pub selected_file: Option<String>,
+    pub config: Config,
 }
 
 impl App {
     pub fn new() -> Result<Self> {
+        let config = Config::load();
         let repository = Repository::open_current_dir()?;
         let files = repository.get_changed_files()?;
         let file_paths: Vec<String> = files.iter().map(|f| f.path.clone()).collect();
@@ -61,6 +64,7 @@ impl App {
             diff_lines: Vec::new(),
             diff_scroll: 0,
             selected_file: None,
+            config,
         })
     }
 
@@ -318,7 +322,7 @@ impl App {
                     self.selected_file = Some(file.path.clone());
                     // Get terminal width (subtract 2 for border)
                     let width = terminal::size().map(|(w, _)| w.saturating_sub(2)).unwrap_or(80);
-                    self.diff_content = crate::git::get_diff(&file.path, width);
+                    self.diff_content = crate::git::get_diff(&file.path, width, &self.config.diff);
 
                     // Parse ANSI escape sequences into styled lines
                     self.diff_lines = match self.diff_content.as_slice().into_text() {

@@ -21,3 +21,6 @@ ansi-to-tui = "7.0"
 anyhow = "1.0"
 thiserror = "2.0"
 which = "7.0"
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.8"
+directories = "5.0"

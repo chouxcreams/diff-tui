@@ -31,6 +31,30 @@ cargo build --release
 ./target/release/diff-tui
 ```
 
+## Configuration
+
+Create `~/.config/diff-tui/config.toml` to customize settings:
+
+```toml
+[diff]
+# Diff tool to use (default: "auto")
+# Options: "auto", "delta", "diff-so-fancy", "difftastic", "colordiff", "git"
+# Or specify any custom command name
+tool = "delta"
+
+# Additional arguments to pass to the diff tool (optional)
+args = ["--side-by-side"]
+```
+
+### Diff Tool Behavior
+
+| Value | Behavior |
+|-------|----------|
+| `"auto"` | Try delta first, fall back to git diff (default) |
+| `"delta"` | Use delta (falls back to git diff if not installed) |
+| `"git"` | Use git diff directly |
+| Other | Use specified command (falls back to git diff if not found) |
+
 ## Usage
 
 Run inside a Git repository:
