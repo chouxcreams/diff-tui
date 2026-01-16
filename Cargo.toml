@@ -2,6 +2,15 @@
 name = "diff-tui"
 version = "0.1.0"
 edition = "2021"
+description = "A terminal-based Git diff viewer with fuzzy search"
+license = "MIT"
+authors = ["chouxcreams"]
+repository = "https://github.com/chouxcreams/diff-tui"
+homepage = "https://github.com/chouxcreams/diff-tui"
+readme = "README.md"
+keywords = ["git", "diff", "tui", "terminal", "cli"]
+categories = ["command-line-utilities", "development-tools"]
+rust-version = "1.70"
 
 [dependencies]
 ratatui = "0.29"
