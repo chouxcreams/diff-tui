@@ -20,15 +20,18 @@ A terminal-based Git diff viewer. Provides an intuitive interface for browsing c
 
 ## Installation
 
+From crates.io:
+
 ```bash
-cargo install --path .
+cargo install diff-tui
 ```
 
-Or for development:
+From source:
 
 ```bash
-cargo build --release
-./target/release/diff-tui
+git clone https://github.com/chouxcreams/diff-tui
+cd diff-tui
+cargo install --path .
 ```
 
 ## Configuration
