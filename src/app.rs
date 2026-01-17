@@ -35,6 +35,7 @@ pub struct App {
     pub diff_scroll: u16,
     pub selected_file: Option<String>,
     pub config: Config,
+    pub needs_redraw: bool,
 }
 
 impl App {
@@ -65,11 +66,16 @@ impl App {
             diff_scroll: 0,
             selected_file: None,
             config,
+            needs_redraw: false,
         })
     }
 
     pub fn run(mut self, mut terminal: DefaultTerminal) -> Result<()> {
         while self.running {
+            if self.needs_redraw {
+                terminal.clear()?;
+                self.needs_redraw = false;
+            }
             terminal.draw(|frame| self.draw(frame))?;
             self.handle_events()?;
         }
@@ -397,6 +403,8 @@ impl App {
                 terminal::EnterAlternateScreen,
                 terminal::Clear(terminal::ClearType::All)
             );
+
+            self.needs_redraw = true;
         }
     }
 }
