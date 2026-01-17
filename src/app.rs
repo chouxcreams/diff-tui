@@ -158,7 +158,7 @@ impl App {
         let help_text = if self.search_mode {
             " Type to search | Enter: select | Esc: cancel "
         } else {
-            " j/k: move | Enter: view diff | /: search | q: quit "
+            " j/k: move | Enter: view diff | e: edit | /: search | q: quit"
         };
         let help = Paragraph::new(help_text).style(Style::default().fg(Color::DarkGray));
         frame.render_widget(help, help_area);
@@ -188,7 +188,7 @@ impl App {
         let total_lines = self.diff_lines.len();
         let current_line = self.diff_scroll as usize + 1;
         let help = Paragraph::new(format!(
-            " j/k: scroll | e: edit | q: back | Line {}/{} ",
+            " j/k: scroll | e: edit | Esc: back | q: quit | Line {}/{} ",
             current_line.min(total_lines),
             total_lines
         ))
@@ -244,6 +244,7 @@ impl App {
                 KeyCode::Char('/') => {
                     self.search_mode = true;
                 }
+                KeyCode::Char('e') => self.open_selected_in_editor(),
                 KeyCode::Enter => self.open_diff(),
                 _ => {}
             }
@@ -252,7 +253,10 @@ impl App {
 
     fn handle_diff_view_keys(&mut self, code: KeyCode) {
         match code {
-            KeyCode::Char('q') | KeyCode::Esc => {
+            KeyCode::Char('q') => {
+                self.running = false;
+            }
+            KeyCode::Esc => {
                 self.screen = Screen::FileList;
                 self.diff_scroll = 0;
             }
@@ -355,6 +359,17 @@ impl App {
 
                     self.diff_scroll = 0;
                     self.screen = Screen::DiffView;
+                }
+            }
+        }
+    }
+
+    fn open_selected_in_editor(&mut self) {
+        if let Some(list_idx) = self.list_state.selected() {
+            if let Some(&file_idx) = self.filtered_indices.get(list_idx) {
+                if let Some(file) = self.files.get(file_idx) {
+                    self.selected_file = Some(file.path.clone());
+                    self.open_in_editor();
                 }
             }
         }

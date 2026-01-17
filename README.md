@@ -82,6 +82,7 @@ diff-tui
 | `j` / `↓` | Move to next file |
 | `k` / `↑` | Move to previous file |
 | `Enter` | View diff of selected file |
+| `e` | Open file in editor |
 | `/` | Start search mode |
 | `q` | Quit |
 
@@ -106,7 +107,8 @@ diff-tui
 | `g` / `Home` | Go to top |
 | `G` / `End` | Go to bottom |
 | `e` | Open file in editor |
-| `q` / `Esc` | Return to file selection |
+| `Esc` | Return to file selection |
+| `q` | Quit |
 
 ## Tech Stack
 
